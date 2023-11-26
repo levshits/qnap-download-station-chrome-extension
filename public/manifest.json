@@ -10,19 +10,16 @@
   },
   "action": {
     "default_popup": "index.html",
-    "default_title": "Open the popup"
+    "default_title": "QNAP Download Station Manager Settings"
   },
   "permissions": [
-    "menus",
     "contextMenus",
-    "storage",
+    "storage"
+  ],
+  "host_permissions": [
     "http://*/",
     "https://*/"
-],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
+  ],
   "background": {
     "service_worker": "./static/js/background.js"
  }

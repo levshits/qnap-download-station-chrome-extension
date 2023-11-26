@@ -1,23 +1,60 @@
-import React from 'react';
-import './App.css';
+import {
+  Box,
+  Button,
+  Grommet,
+  Header,
+  HeaderExtendedProps,
+  Menu,
+  Nav,
+  Tab,
+  Tabs,
+  Text,
+} from "grommet";
+import { SettingsPage } from "./views/SettingsPage";
+import { theme } from "../theme";
+import "./App.css";
+import { useState } from "react";
+import { Moon, Sun } from "grommet-icons";
+import { DownloadsPage } from "./views/DownloadsPage";
+
+const AppBar = (props: HeaderExtendedProps) => {
+  return (
+    <Header
+      pad="medium"
+      background="brand"
+      margin={{ bottom: "medium" }}
+      sticky="scrollup"
+      {...props}
+    />
+  );
+};
 
 function App() {
+  const [dark, setDark] = useState(true);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grommet full="min" theme={theme} themeMode={dark ? "dark" : "light"}>
+        <AppBar>
+          <Text size="large">QNAP Download Station</Text>
+          <Button
+            a11yTitle={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            icon={dark ? <Moon /> : <Sun />}
+            onClick={() => setDark(!dark)}
+          />
+        </AppBar>
+        <Tabs justify="start">
+          <Tab title="Downloads">
+            <Box>
+              <DownloadsPage />
+            </Box>
+          </Tab>
+          <Tab title="Settings">
+          <Box>
+              <SettingsPage />
+            </Box>
+          </Tab>
+        </Tabs>
+    </Grommet>
   );
 }
 
