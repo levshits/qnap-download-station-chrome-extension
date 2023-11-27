@@ -2,7 +2,7 @@
   "short_name": "QNAP Download Station",
   "name": "QNAP Download Station Manager",
   "description": "QNAP Download Station Manager allows you to add links to QNAP download station",
-  "version": "1.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "default_locale": "en",
   "icons": {
