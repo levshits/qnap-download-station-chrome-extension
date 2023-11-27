@@ -5,7 +5,6 @@ import { createContextMenus } from "./ContextMenu";
 
 export function subscribeToEvents() {
   storage.local.onChanged.addListener((changes) => {
-    console.log("storage changed", changes, storage.local.get());
     if (!!changes.NasConnectionSettings) {
       handleNewSettings();
     }

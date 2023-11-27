@@ -15,8 +15,6 @@ export function useQnapStore<TValue>(selector: (state: QnapStoreState) => TValue
 
     useEffect(()=> {
         const onChangeHandler  = (changes: Storage.StorageAreaSyncOnChangedChangesType) => {
-
-            console.log('storage changed', changes, storage.local.get());
             return  storage.local.get().then((result) => {
                 setState(selector(result as QnapStoreState));
             });

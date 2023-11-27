@@ -51,13 +51,11 @@ class QnapStore {
 
     getConnectionSettings(){
         return this.getState().then((result) => {
-            console.log('result', result);
             var value = result?.NasConnectionSettings ?? {
                 url: '',
                 username: '',
                 password: ''
             };
-            console.log(value)
             return value;
         });
     }

@@ -5,7 +5,6 @@ import { qnapStore } from "../common/QnapStore";
 import { handleNewSettings, subscribeToEvents } from "./Worker";
 
 runtime.onInstalled.addListener(() => {
-  console.log("[background] loaded ");
   qnapStore.initialize().then(() => {
     init();
   });

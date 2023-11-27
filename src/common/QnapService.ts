@@ -81,11 +81,9 @@ export class QnapService {
       credentials: "include",
     })
       .then((response) => {
-        console.log("response", response);
         return response.json();
       })
       .then((json) => {
-        console.log("json", json);
         if (!!json.error) {
           return Promise.reject(json);
         }

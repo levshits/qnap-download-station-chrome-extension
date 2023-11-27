@@ -6,9 +6,7 @@ import { qnapStore } from "../common/QnapStore";
 export function handleAddUrl(info: Menus.OnClickData, folder: QnapFolder) {
     if (!!info.linkUrl || !!info.selectionText) {
         qnapStore.getState().then((state) => {
-            console.log("state", state);
             if (!!state.ConnectionInfo?.sid) {
-                console.log("no sid found, logging in");
                 return qnapService.addDownloadJob(
                     state.NasConnectionSettings,
                     state.ConnectionInfo.sid,
@@ -25,9 +23,7 @@ export function handleAddUrl(info: Menus.OnClickData, folder: QnapFolder) {
 
 function onMenuItemCreated() {
     if (runtime.lastError) {
-      console.log(`Error: ${runtime.lastError}`);
-    } else {
-      console.log("Item created successfully");
+      console.error(`Error: ${runtime.lastError}`);
     }
   }
 
