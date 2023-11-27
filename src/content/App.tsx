@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css";
+import "mantine-datatable/styles.layer.css";
 import {
   MantineProvider,
   Tabs,
@@ -14,8 +15,9 @@ import { SettingsPage } from "./views/SettingsPage";
 import { theme } from "../theme";
 import "./App.css";
 import { DownloadsPage } from "./views/DownloadsPage";
-import {ReactComponent as LogoIcon} from "./logo.svg";
+import { ReactComponent as LogoIcon } from "./logo.svg";
 import { i18n } from "webextension-polyfill";
+import { ModalsProvider } from "@mantine/modals";
 
 function ColorSchemePicker() {
   const { setColorScheme } = useMantineColorScheme();
@@ -30,7 +32,8 @@ function ColorSchemePicker() {
       }
       variant="default"
       size="xl"
-      aria-label={i18n.getMessage("themeSwitchLabel")}>
+      aria-label={i18n.getMessage("themeSwitchLabel")}
+    >
       <IconSun
         stroke={1.5}
         display={computedColorScheme === "light" ? "none" : "block"}
@@ -46,29 +49,35 @@ function ColorSchemePicker() {
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <AppShell header={{ height: 80 }}>
-        <AppShell.Header>
-          <Group justify="space-between" p="md">
-            <LogoIcon height={48} />
-            <Title order={1}>{i18n.getMessage("appTitle")}</Title>
-            <ColorSchemePicker />
-          </Group>
-        </AppShell.Header>
-        <AppShell.Main>
-          <Tabs defaultValue="downloads">
-            <Tabs.List grow>
-              <Tabs.Tab value="downloads">{i18n.getMessage("tabTitleDownloads")}</Tabs.Tab>
-              <Tabs.Tab value="settings">{i18n.getMessage("tabTitleSettings")}</Tabs.Tab>
-            </Tabs.List>
-            <Tabs.Panel value="downloads">
-              <DownloadsPage />
-            </Tabs.Panel>
-            <Tabs.Panel value="settings">
-              <SettingsPage />
-            </Tabs.Panel>
-          </Tabs>
-        </AppShell.Main>
-      </AppShell>
+      <ModalsProvider>
+        <AppShell header={{ height: 80 }}>
+          <AppShell.Header>
+            <Group justify="space-between" p="md">
+              <LogoIcon height={48} />
+              <Title order={1}>{i18n.getMessage("appTitle")}</Title>
+              <ColorSchemePicker />
+            </Group>
+          </AppShell.Header>
+          <AppShell.Main>
+            <Tabs defaultValue="downloads">
+              <Tabs.List grow>
+                <Tabs.Tab value="downloads">
+                  {i18n.getMessage("tabTitleDownloads")}
+                </Tabs.Tab>
+                <Tabs.Tab value="settings">
+                  {i18n.getMessage("tabTitleSettings")}
+                </Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel value="downloads">
+                <DownloadsPage />
+              </Tabs.Panel>
+              <Tabs.Panel value="settings">
+                <SettingsPage />
+              </Tabs.Panel>
+            </Tabs>
+          </AppShell.Main>
+        </AppShell>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

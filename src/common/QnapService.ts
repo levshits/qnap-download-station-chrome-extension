@@ -1,3 +1,4 @@
+import { type } from "os";
 import { QnapConnectionString } from "./Models";
 
 export type LoginResponseModel = BaseResponseModel & {
@@ -15,6 +16,14 @@ export type DownloadJobsListResponseModel = BaseResponseModel & {
   status: DownloadStationStatusModel;
   total: number;
 };
+
+export enum DownloadJobState {
+  Draft = 103,
+  Downloading = 104,
+  Seeding = 100,
+  Completed = 5,
+  Stopped = 1
+}
 
 export type DownloadJobModel = {
   activity_time: number;
@@ -42,7 +51,7 @@ export type DownloadJobModel = {
   source: string;
   source_name: string;
   start_time: string;
-  state: number;
+  state: DownloadJobState;
   temp: string;
   total_down: number;
   total_files: number;
@@ -69,6 +78,16 @@ export type DownloadStationStatusModel = {
   up_rate: number;
   url: number;
 };
+
+export type DownloadJobQueryModel = 
+  {
+    limit: number,
+    from: number,
+    field: keyof DownloadJobModel,
+    direction: "DESC" | "ASC",
+    status: "all",
+    type: "all",
+  }
 
 export class QnapService {
   post<TResponse>(url: string, body: any) {
@@ -106,15 +125,19 @@ export class QnapService {
     throw new Error("No settings provided");
   }
 
-  getDownloadJobsList(settings: QnapConnectionString, sid: string) {
+  getDownloadJobsList(settings: QnapConnectionString, sid: string, params: Partial<DownloadJobQueryModel> = {}) {
     if (!!settings && !!sid) {
       return this.post<DownloadJobsListResponseModel>(
         settings.url + "/downloadstation/V4/Task/Query",
         {
           sid: sid,
           limit: 0,
+          from: 0,
+          field: "priority",
+          direction: "DESC",
           status: "all",
           type: "all",
+          ...(params || {})
         }
       );
     }
@@ -141,6 +164,58 @@ export class QnapService {
         }
       );
     }
+  }
+
+  startDownloadJob(
+    settings: QnapConnectionString,
+    sid: string,
+    hash: string
+  ) {
+    if (!!settings && !!sid) {
+      return this.post<BaseResponseModel>(
+        settings.url + "/downloadstation/V4/Task/Start",
+        {
+          sid: sid,
+          hash: hash
+        }
+      );
+    }
+    throw new Error("Connection is not initialized");
+  }
+
+  stopDownloadJob(
+    settings: QnapConnectionString,
+    sid: string,
+    hash: string
+  ) {
+    if (!!settings && !!sid) {
+      return this.post<BaseResponseModel>(
+        settings.url + "/downloadstation/V4/Task/Stop",
+        {
+          sid: sid,
+          hash: hash
+        }
+      );
+    }
+    throw new Error("Connection is not initialized");
+  }
+
+  removeDownloadJob(
+    settings: QnapConnectionString,
+    sid: string,
+    hash: string
+  ) {
+    if (!!settings && !!sid) {
+      return this.post<BaseResponseModel>(
+        settings.url + "/downloadstation/V4/Task/Remove",
+        {
+          sid: sid,
+          hash: hash,
+          clean: 1
+        }
+      );
+    }
+    throw new Error("Connection is not initialized");
   }
 }
 
