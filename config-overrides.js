@@ -1,5 +1,20 @@
 const { override } = require('customize-cra')
 
+var overridePostCss = (config) => {
+    filterPostCSSLoader(config.module.rules).forEach(rule => {
+      filterPostCSSLoader(rule.oneOf).forEach(oneOf => {
+        filterPostCSSLoader(oneOf.use || oneOf.loader).forEach(use => {
+          use.loader = require.resolve('postcss-loader');
+
+        });
+      });
+    }); 
+  
+    return config;
+  }; 
+  
+  const filterPostCSSLoader = array => array.filter(object => JSON.stringify(object).includes('postcss-loader'));
+
 const overrideEntry = (config) => {
     config.entry = {
       main: './src/content', // the extension UI
@@ -20,5 +35,5 @@ const overrideOutput = (config) => {
 }
 
 module.exports = {
-    webpack: (config) => override(overrideEntry, overrideOutput)(config),
+    webpack: (config) => override(overrideEntry, overrideOutput, overridePostCss)(config),
 }

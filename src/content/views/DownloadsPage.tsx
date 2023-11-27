@@ -1,70 +1,80 @@
 import { useQnapStore } from "../../common/useQnapStore";
-import {
-  Box,
-  ColumnConfig,
-  Data,
-  DataFilter,
-  DataFilters,
-  DataSearch,
-  DataSummary,
-  DataTable,
-  Page,
-  PageContent,
-  PageHeader,
-  Pagination,
-  Spinner,
-  Toolbar,
-  View,
-} from "grommet";
 import { DownloadJobModel } from "../../common/QnapService";
-import { useState } from "react";
+import { useMemo } from "react";
+import { Container, Table, TableData } from "@mantine/core";
 
-const columns: ColumnConfig<DownloadJobModel>[] = [
+function humanFileSize(size: number) {
+  var i: number = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  return (
+    (size / Math.pow(1024, i)).toFixed(2) +
+    " " +
+    ["B", "kB", "MB", "GB", "TB"][i]
+  );
+}
+
+type ColumnDefinition<TModel> = {
+  header: string;
+  property: keyof TModel;
+  render?: (model: TModel) => React.ReactNode;
+};
+
+const columns: ColumnDefinition<DownloadJobModel>[] = [
   {
     property: "priority",
     header: "Id",
-    primary: true,
   },
   {
     property: "source_name",
-    header: "Filename",
-    sortable: true,
+    header: "Name",
+  },
+
+  {
+    property: "down_rate",
+    header: "Download speed",
+    render: ({ down_rate }) => humanFileSize(down_rate) + "/s",
+  },
+  {
+    property: "up_rate",
+    header: "Upload speed",
+    render: ({ up_rate }) => humanFileSize(up_rate) + "/s",
+  },
+  {
+    property: "size",
+    header: "Size",
+    render: ({ size }) => humanFileSize(size),
+  },
+  {
+    property: "done",
+    header: "Percent Complete",
+    render: ({ done, size }) =>
+      (((done ?? 0) / (size ?? 100)) * 100).toFixed(2) + "%",
+  },
+  {
+    property: "peers",
+    header: "Peers",
   },
   {
     property: "create_time",
     header: "Create Time",
-    sortable: true,
-  }
+    render: ({ create_time }) => new Date(create_time).toLocaleDateString(),
+  },
 ];
 
-const defaultView: View = {
-  search: '',
-  sort: { property: 'name', direction: 'asc' },
-  step: 10,
-};
-
 export function DownloadsPage() {
-  const { isInitialized, state } = useQnapStore((x) => x.Jobs);
-
-  const [view, setView] = useState(defaultView);
-
-  return (
-    <Page>
-      <PageContent>
-        <PageHeader title="Download Jobs" size="small" justify="start" />
-        {!!state && (
-          <Data data={state}           
-            defaultView={defaultView}
-            view={view}
-            onView={setView}
-            total={state.length}>
-            <Box flex overflow="auto">
-              <DataTable columns={columns} />
-              <Pagination />
-            </Box>
-          </Data>
-        )}
-      </PageContent>
-    </Page>
+  const { state } = useQnapStore((x) => x.Jobs);
+  const tableData: TableData = useMemo<TableData>(
+    () => ({
+      head: columns.map((column) => column.header),
+      body: state?.map((job) => {
+        return columns.map((column) => {
+          return column.render ? column.render(job) : job[column.property];
+        });
+      }),
+    }),
+    [state]
   );
+
+  return <Container fluid>
+    {!!state && <Table data={tableData} stickyHeader/>}
+    </Container>;
 }

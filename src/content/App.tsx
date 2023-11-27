@@ -1,60 +1,73 @@
+import "@mantine/core/styles.css";
 import {
-  Box,
-  Button,
-  Grommet,
-  Header,
-  HeaderExtendedProps,
-  Menu,
-  Nav,
-  Tab,
+  MantineProvider,
   Tabs,
-  Text,
-} from "grommet";
+  ActionIcon,
+  useMantineColorScheme,
+  useComputedColorScheme,
+  Title,
+  AppShell,
+  Group,
+} from "@mantine/core";
+import { IconSun, IconMoon } from "@tabler/icons-react";
 import { SettingsPage } from "./views/SettingsPage";
 import { theme } from "../theme";
 import "./App.css";
-import { useState } from "react";
-import { Moon, Sun } from "grommet-icons";
 import { DownloadsPage } from "./views/DownloadsPage";
 
-const AppBar = (props: HeaderExtendedProps) => {
+function ColorSchemePicker() {
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme("light", {
+    getInitialValueInEffect: true,
+  });
+
   return (
-    <Header
-      pad="medium"
-      background="brand"
-      margin={{ bottom: "medium" }}
-      sticky="scrollup"
-      {...props}
-    />
+    <ActionIcon
+      onClick={() =>
+        setColorScheme(computedColorScheme === "light" ? "dark" : "light")
+      }
+      variant="default"
+      size="xl"
+      aria-label="Toggle color scheme"
+    >
+      <IconSun
+        stroke={1.5}
+        display={computedColorScheme === "light" ? "none" : "block"}
+      />
+      <IconMoon
+        stroke={1.5}
+        display={computedColorScheme === "dark" ? "none" : "block"}
+      />
+    </ActionIcon>
   );
-};
+}
 
 function App() {
-  const [dark, setDark] = useState(true);
-
   return (
-    <Grommet full="min" theme={theme} themeMode={dark ? "dark" : "light"}>
-        <AppBar>
-          <Text size="large">QNAP Download Station</Text>
-          <Button
-            a11yTitle={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            icon={dark ? <Moon /> : <Sun />}
-            onClick={() => setDark(!dark)}
-          />
-        </AppBar>
-        <Tabs justify="start">
-          <Tab title="Downloads">
-            <Box>
+    <MantineProvider theme={theme}>
+      <AppShell header={{ height: 80 }}>
+        <AppShell.Header>
+          <Group justify="space-between" p="md">
+            <Title order={1}>QNAP Download Station</Title>
+            <ColorSchemePicker />
+          </Group>
+        </AppShell.Header>
+        <AppShell.Main>
+          <Tabs defaultValue="downloads">
+            <Tabs.List grow>
+              <Tabs.Tab value="downloads">Downloads</Tabs.Tab>
+              <Tabs.Tab value="settings">Settings</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="downloads">
               <DownloadsPage />
-            </Box>
-          </Tab>
-          <Tab title="Settings">
-          <Box>
+            </Tabs.Panel>
+            <Tabs.Panel value="settings">
               <SettingsPage />
-            </Box>
-          </Tab>
-        </Tabs>
-    </Grommet>
+            </Tabs.Panel>
+          </Tabs>
+        </AppShell.Main>
+      </AppShell>
+    </MantineProvider>
   );
 }
 

@@ -1,9 +1,9 @@
 import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { Container, Group, Button, TextInput, Stack } from "@mantine/core";
+import { IconSquareRoundedPlus, IconTrashX } from "@tabler/icons-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { QnapConnectionString } from "../../common/Models";
-import { Box, Button, Form, FormField, TextInput } from "grommet";
-import { Add, Trash } from "grommet-icons";
 
 export type ConnectionSettingsFormProps = {
   model?: QnapConnectionString;
@@ -34,7 +34,7 @@ export function ConnectionSettingsForm({
   model,
   onSubmit,
 }: ConnectionSettingsFormProps) {
-  const { handleSubmit, reset, control } = useForm<QnapConnectionString>({
+  const { handleSubmit, reset, control, formState: {isDirty} } = useForm<QnapConnectionString>({
     defaultValues: model,
     resolver: yupResolver(schema),
   });
@@ -45,118 +45,103 @@ export function ConnectionSettingsForm({
   });
 
   return (
-    <Box pad="medium">
-      <Form onSubmit={handleSubmit(onSubmit)} onReset={() => reset()}>
+    <form onSubmit={handleSubmit(onSubmit)} onReset={() => reset()}>
+      <Stack gap="sm" p="md">
         <Controller
           name="url"
           control={control}
           render={({ field, fieldState }) => (
-            <FormField
+            <TextInput
               label="Download Station URL:"
-              htmlFor={field.name}
-              name={field.name}
               error={fieldState.error?.message}
-            >
-              <TextInput required={true} {...field} />
-            </FormField>
+              {...field}
+            />
           )}
         />
         <Controller
           name="username"
           control={control}
           render={({ field, fieldState }) => (
-            <FormField
+            <TextInput
               label="Username:"
-              htmlFor={field.name}
-              name={field.name}
               error={fieldState.error?.message}
-            >
-              <TextInput required={true} {...field} />
-            </FormField>
+              {...field}
+            />
           )}
         />
         <Controller
           name="password"
           control={control}
           render={({ field, fieldState }) => (
-            <FormField
+            <TextInput
               label="Password:"
-              htmlFor={field.name}
-              name={field.name}
               error={fieldState.error?.message}
-            >
-              <TextInput required={true} type="password" {...field} />
-            </FormField>
+              type="password"
+              {...field}
+            />
           )}
         />
-        <Button
-          icon={<Add />}
-          label="Add Folder"
-          plain
-          hoverIndicator
-          onClick={() => append({ name: "", tempFolder: "", moveFolder: "" })}
-        />
+
         {fields.map((item, index) => (
-          <Box key={item.id}>
+          <Stack key={item.id} gap="sm">
             <Controller
               name={`folders.${index}.name`}
               control={control}
               render={({ field, fieldState }) => (
-                <FormField
+                <TextInput
                   label="Folder name:"
-                  htmlFor={field.name}
-                  name={field.name}
                   error={fieldState.error?.message}
-                >
-                  <TextInput required={true} {...field} />
-                </FormField>
+                  {...field}
+                />
               )}
             />
             <Controller
               name={`folders.${index}.tempFolder`}
               control={control}
               render={({ field, fieldState }) => (
-                <FormField
+                <TextInput
                   label="Temp folder path:"
-                  htmlFor={field.name}
-                  name={field.name}
                   error={fieldState.error?.message}
-                >
-                  <TextInput required={true} {...field} />
-                </FormField>
+                  {...field}
+                />
               )}
             />
             <Controller
               name={`folders.${index}.moveFolder`}
               control={control}
               render={({ field, fieldState }) => (
-                <FormField
+                <TextInput
                   label="Target folder path:"
-                  htmlFor={field.name}
-                  name={field.name}
                   error={fieldState.error?.message}
-                >
-                  <TextInput required={true} {...field} />
-                </FormField>
+                  {...field}
+                />
               )}
             />
             {fields?.length > 1 && (
               <Button
-                icon={<Trash />}
-                label="Remove"
-                plain
-                hoverIndicator
                 onClick={() => remove(index)}
-              />
+                variant="outline"
+                leftSection={<IconTrashX />}
+              >
+                Remove Folder
+              </Button>
             )}
-          </Box>
+          </Stack>
         ))}
-
-        <Box direction="row" margin={{ top: "medium" }}>
-          <Button type="submit" label="Update" primary />
-          <Button type="reset" label="Cancel" />
-        </Box>
-      </Form>
-    </Box>
+        <Button
+          onClick={() => append({ name: "", tempFolder: "", moveFolder: "" })}
+          leftSection={<IconSquareRoundedPlus />}>
+          Add Folder
+        </Button>
+        {!!isDirty && <Group p="md" grow>
+          <Button type="submit" variant="filled" size="md">
+            Update
+          </Button>
+          <Button type="reset" variant="outline" size="md">
+            Cancel
+          </Button>
+        </Group>}
+      </Stack>
+    </form>
   );
 }
