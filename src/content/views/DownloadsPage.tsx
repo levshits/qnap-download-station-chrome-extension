@@ -258,7 +258,7 @@ export function DownloadsPage() {
           page={page}
           onPageChange={setPage}
           defaultColumnProps={{
-            textAlign: 'right',
+            textAlign: 'left',
             noWrap: true,
             ellipsis: true,
           }}
