@@ -14,6 +14,7 @@ import { SettingsPage } from "./views/SettingsPage";
 import { theme } from "../theme";
 import "./App.css";
 import { DownloadsPage } from "./views/DownloadsPage";
+import {ReactComponent as LogoIcon} from "./logo.svg";
 
 function ColorSchemePicker() {
   const { setColorScheme } = useMantineColorScheme();
@@ -28,8 +29,7 @@ function ColorSchemePicker() {
       }
       variant="default"
       size="xl"
-      aria-label="Toggle color scheme"
-    >
+      aria-label="Toggle color scheme">
       <IconSun
         stroke={1.5}
         display={computedColorScheme === "light" ? "none" : "block"}
@@ -48,6 +48,7 @@ function App() {
       <AppShell header={{ height: 80 }}>
         <AppShell.Header>
           <Group justify="space-between" p="md">
+            <LogoIcon height={48} />
             <Title order={1}>QNAP Download Station</Title>
             <ColorSchemePicker />
           </Group>
