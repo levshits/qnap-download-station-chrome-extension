@@ -4,7 +4,7 @@ import {
   DownloadJobState,
   qnapService,
 } from "../../common/QnapService";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActionIcon, Container, Group } from "@mantine/core";
 import {
   DataTable,
@@ -116,6 +116,7 @@ export function DownloadsPage() {
 
   const [page, setPage] = useState(1);
 
+
   const { data, isFetching } = useQuery({
     queryKey: ["jobs", sortStatus, page],
     queryFn: () =>
@@ -168,6 +169,13 @@ export function DownloadsPage() {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
     },
   });
+
+  useEffect(() => {
+    if(data?.total && data.total < (page - 1) * PAGE_SIZE && page > 1){
+      setPage(1);
+      console.log("Page reset");
+    }
+  }, [page, data?.total]);
 
   return (
     <Container fluid>

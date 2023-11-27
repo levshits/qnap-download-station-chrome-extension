@@ -1,5 +1,5 @@
 import { storage, action, i18n } from "webextension-polyfill";
-import { LoginResponseModel, qnapService } from "../common/QnapService";
+import { DownloadJobState, LoginResponseModel, qnapService } from "../common/QnapService";
 import { qnapStore } from "../common/QnapStore";
 import { createContextMenus } from "./ContextMenu";
 
@@ -40,7 +40,7 @@ function monitorDownloadJobs() {
             monitorServiceId = undefined;
             clearInterval(monitorServiceId);
         }
-    })}, 5000);
+    })}, 10000);
 }
 }
 
@@ -56,7 +56,7 @@ export function handleNewSettings() {
 }
 function handleJobsUpdate() {
     qnapStore.getState().then((result) => {
-        var inProgressJobs = result.Jobs.filter((job) => job.state != 100).length;
+        var inProgressJobs = result.Jobs.filter((job) => job.state == DownloadJobState.Downloading).length;
 
         setBadge(`${inProgressJobs}/${result.Jobs.length}`, '#B9FF66');
     });
