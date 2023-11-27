@@ -1,6 +1,6 @@
-import { storage, action } from "webextension-polyfill";
+import { storage, action, i18n } from "webextension-polyfill";
 import { LoginResponseModel, qnapService } from "../common/QnapService";
-import { QnapStoreState, qnapStore } from "../common/QnapStore";
+import { qnapStore } from "../common/QnapStore";
 import { createContextMenus } from "./ContextMenu";
 
 export function subscribeToEvents() {
@@ -51,7 +51,7 @@ export function handleNewSettings() {
         monitorDownloadJobs();
     })
     .catch((error) => {
-        setBadge("Error", '#F00');
+        setBadge(i18n.getMessage("badgeStatusError"), '#F00');
     })
 }
 function handleJobsUpdate() {

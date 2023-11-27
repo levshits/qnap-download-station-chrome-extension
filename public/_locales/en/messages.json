@@ -2,5 +2,21 @@
     "contextMenuNodeTitle": {
       "message": "Send Link to QNAP Download station",
       "description": "Send Link to QNAP Download station"
+    },
+    "badgeStatusError": {
+      "message": "Error",
+      "description": "Extension status error"
+    },
+    "tabTitleDownloads": {
+      "message": "Downloads"
+    },
+    "tabTitleSettings": {
+      "message": "Settings"
+    },
+    "appTitle": {
+      "message": "QNAP Download Station"
+    },
+    "themeSwitchLabel": {
+      "message": "Toggle color scheme"
     }   
 }

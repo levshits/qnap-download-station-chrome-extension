@@ -15,6 +15,7 @@ import { theme } from "../theme";
 import "./App.css";
 import { DownloadsPage } from "./views/DownloadsPage";
 import {ReactComponent as LogoIcon} from "./logo.svg";
+import { i18n } from "webextension-polyfill";
 
 function ColorSchemePicker() {
   const { setColorScheme } = useMantineColorScheme();
@@ -29,7 +30,7 @@ function ColorSchemePicker() {
       }
       variant="default"
       size="xl"
-      aria-label="Toggle color scheme">
+      aria-label={i18n.getMessage("themeSwitchLabel")}>
       <IconSun
         stroke={1.5}
         display={computedColorScheme === "light" ? "none" : "block"}
@@ -44,20 +45,20 @@ function ColorSchemePicker() {
 
 function App() {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <AppShell header={{ height: 80 }}>
         <AppShell.Header>
           <Group justify="space-between" p="md">
             <LogoIcon height={48} />
-            <Title order={1}>QNAP Download Station</Title>
+            <Title order={1}>{i18n.getMessage("appTitle")}</Title>
             <ColorSchemePicker />
           </Group>
         </AppShell.Header>
         <AppShell.Main>
           <Tabs defaultValue="downloads">
             <Tabs.List grow>
-              <Tabs.Tab value="downloads">Downloads</Tabs.Tab>
-              <Tabs.Tab value="settings">Settings</Tabs.Tab>
+              <Tabs.Tab value="downloads">{i18n.getMessage("tabTitleDownloads")}</Tabs.Tab>
+              <Tabs.Tab value="settings">{i18n.getMessage("tabTitleSettings")}</Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="downloads">
               <DownloadsPage />
