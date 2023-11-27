@@ -10,6 +10,9 @@ runtime.onInstalled.addListener(() => {
   });
 });
 
+runtime.onStartup.addListener(() => {
+  init();
+})
 
 export async function init() {
   subscribeToEvents();
