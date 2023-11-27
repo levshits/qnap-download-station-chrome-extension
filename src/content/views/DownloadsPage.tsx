@@ -36,13 +36,8 @@ const dataTableColumns: DataTableColumn<DownloadJobModel>[] = [
     sortable: true,
   },
   {
-    accessor: "source",
-    title: "Name",
-    sortable: true,
-  },
-  {
     accessor: "state",
-    title: "Name",
+    title: "State",
     render: ({ state }) => {
       switch (state) {
         case DownloadJobState.Draft:
@@ -59,6 +54,12 @@ const dataTableColumns: DataTableColumn<DownloadJobModel>[] = [
           return `Unknows - ${state}`;
       }
     },
+  },
+  {
+    accessor: "source",
+    title: "Name",
+    sortable: true,
+    width: 300,
   },
   {
     accessor: "down_rate",
@@ -256,6 +257,11 @@ export function DownloadsPage() {
           recordsPerPage={PAGE_SIZE}
           page={page}
           onPageChange={setPage}
+          defaultColumnProps={{
+            textAlign: 'right',
+            noWrap: true,
+            ellipsis: true,
+          }}
         />
       )}
     </Container>
