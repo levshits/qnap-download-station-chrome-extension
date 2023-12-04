@@ -112,7 +112,7 @@ export class QnapService {
   }
 
   login(settings: QnapConnectionString): any {
-    if (!!settings) {
+    if (!!settings?.url) {
       return this.post<LoginResponseModel>(
         settings.url + "/downloadstation/V4/Misc/Login",
         {

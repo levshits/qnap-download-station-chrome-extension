@@ -51,6 +51,7 @@ export function handleNewSettings() {
         monitorDownloadJobs();
     })
     .catch((error) => {
+      console.error(error);
         setBadge(i18n.getMessage("badgeStatusError"), '#F00');
     })
 }

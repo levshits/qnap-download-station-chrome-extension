@@ -16,5 +16,10 @@ runtime.onStartup.addListener(() => {
 
 export async function init() {
   subscribeToEvents();
-  await handleNewSettings();
+
+  try{
+    await handleNewSettings();
+  } catch (error) {
+    console.error(error);
+  }
 }

@@ -9,6 +9,7 @@ import {
   Title,
   AppShell,
   Group,
+  Button,
 } from "@mantine/core";
 import { IconSun, IconMoon } from "@tabler/icons-react";
 import { SettingsPage } from "./views/SettingsPage";
@@ -16,7 +17,7 @@ import { theme } from "../theme";
 import "./App.css";
 import { DownloadsPage } from "./views/DownloadsPage";
 import { ReactComponent as LogoIcon } from "./logo.svg";
-import { i18n } from "webextension-polyfill";
+import { i18n, permissions } from "webextension-polyfill";
 import { ModalsProvider } from "@mantine/modals";
 
 function ColorSchemePicker() {

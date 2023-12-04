@@ -14,9 +14,12 @@ export type QnapStoreState = {
 class QnapStore {
     defaultState: QnapStoreState = {
         NasConnectionSettings: {
-            url: 'http://qnap.local:8080/',
-            username: 'media',
-            password: '42?gV3RBXl]1',
+            url: '',
+            username: '',
+            password: '',
+            // url: 'http://qnap.local:8080/',
+            // username: 'media',
+            // password: '42?gV3RBXl]1',
             folders: [{
                 name: 'Movies',
                 tempFolder: 'Content/@DownloadStationTempFiles',
