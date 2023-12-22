@@ -11,17 +11,21 @@ export function useQnapStore<TValue>(selector: (state: QnapStoreState) => TValue
             setState(selector(result as QnapStoreState));
             setIsInitialized(true);
         })
-    });
+    }, []);
 
     useEffect(()=> {
-        const onChangeHandler  = (changes: Storage.StorageAreaSyncOnChangedChangesType) => {
-            return  storage.local.get().then((result) => {
-                setState(selector(result as QnapStoreState));
-            });
+        let innerState = state;
+        const onChangeHandler  = async (changes: Storage.StorageAreaSyncOnChangedChangesType) => {
+            let result = await storage.local.get();
+            const value = selector(result as QnapStoreState);
+            if(JSON.stringify(innerState) != JSON.stringify(value)) {
+                innerState = value;
+                setState(value);
+            }
         }
         storage.local.onChanged.addListener(onChangeHandler);
-        return storage.local.onChanged.removeListener(onChangeHandler);
-    })
+        return () => storage.local.onChanged.removeListener(onChangeHandler);
+    }, [])
 
     return {state, isInitialized};
 }

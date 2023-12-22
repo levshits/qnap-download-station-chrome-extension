@@ -3,21 +3,20 @@ import { QnapFolder } from "../common/Models";
 import { qnapService } from "../common/QnapService";
 import { qnapStore } from "../common/QnapStore";
 
-export function handleAddUrl(info: Menus.OnClickData, folder: QnapFolder) {
+export async function handleAddUrl(info: Menus.OnClickData, folder: QnapFolder) {
     if (!!info.linkUrl || !!info.selectionText) {
-        qnapStore.getState().then((state) => {
-            if (!!state.ConnectionInfo?.sid) {
-                return qnapService.addDownloadJob(
-                    state.NasConnectionSettings,
-                    state.ConnectionInfo.sid,
-                    {
-                        tempFolder: folder.tempFolder,
-                        targetFolder: folder.moveFolder,
-                        url: (info.linkUrl || info.selectionText) as string,
-                    }
-                );
-            }
-        });
+        let state = await qnapStore.getState();
+        if (!!state.ConnectionInfo?.sid) {
+            return qnapService.addDownloadJob(
+                state.NasConnectionSettings,
+                state.ConnectionInfo.sid,
+                {
+                    tempFolder: folder.tempFolder,
+                    targetFolder: folder.moveFolder,
+                    url: (info.linkUrl || info.selectionText) as string,
+                }
+            );
+        }
     }
 }
 
@@ -65,14 +64,14 @@ export async function createContextMenus() {
 
       contextMenus.onClicked.addListener((info, tab) => {
         if (info.menuItemId.toString().startsWith(contextMenuIdPrefix)) {
-          var folderName = info.menuItemId
-            .toString()
-            .replace(contextMenuIdPrefix, "");
-          var folderSettings = state.NasConnectionSettings?.folders?.find(
-            (x) => x.name == folderName
-          );
+            const folderName = info.menuItemId
+                .toString()
+                .replace(contextMenuIdPrefix, "");
+            const folderSettings = state.NasConnectionSettings?.folders?.find(
+                (x) => x.name == folderName
+            );
 
-          if (!!folderSettings) {
+            if (!!folderSettings) {
             return handleAddUrl(info, folderSettings);
           }
         }

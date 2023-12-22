@@ -40,7 +40,7 @@ class QnapStore {
     }
 
     saveSid(sid: string) {
-        storage.local.set({ConnectionInfo: {
+        return storage.local.set({ConnectionInfo: {
             sid: sid,
             lastLogin: new Date()
         }});

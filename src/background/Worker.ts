@@ -1,71 +1,63 @@
 import { storage, action, i18n } from "webextension-polyfill";
-import { DownloadJobState, LoginResponseModel, qnapService } from "../common/QnapService";
+import { DownloadJobState, qnapService } from "../common/QnapService";
 import { qnapStore } from "../common/QnapStore";
 import { createContextMenus } from "./ContextMenu";
 
 export function subscribeToEvents() {
-  storage.local.onChanged.addListener((changes) => {
+  storage.local.onChanged.addListener(async (changes) => {
     if (!!changes.NasConnectionSettings) {
-      handleNewSettings();
+        await handleNewSettings();
     }
     if (!!changes.Jobs) {
-        handleJobsUpdate();
-      }
+        await handleJobsUpdate();
+    }
   });
 }
 
-function login() {
-  return qnapStore.getState().then((result) => {
-    return qnapService
-      .login(result.NasConnectionSettings)
-      .then((response: LoginResponseModel) => {
-        return qnapStore.saveSid(response.sid);
-      });
-  });
+async function login() {
+    let result = await qnapStore.getState();
+    let response = await qnapService.login(result.NasConnectionSettings);
+    await qnapStore.saveSid(response.sid);
 }
 
-var monitorServiceId: NodeJS.Timer | undefined;
+let monitorServiceId: NodeJS.Timer | undefined;
 
 function monitorDownloadJobs() {
     if(!monitorServiceId){
-    monitorServiceId = setInterval(() => { 
-        return qnapStore.getState().then((result) => {
-        if(!!result.ConnectionInfo.sid){
-            var sid = result.ConnectionInfo.sid;
-                return qnapService.getDownloadJobsList(result.NasConnectionSettings, sid)
-                .then(async (response) => {
-                    await qnapStore.updateJobs(response);
-                })
+    monitorServiceId = setInterval(async () => {
+        let result = await qnapStore.getState();
+        if (!!result.ConnectionInfo.sid) {
+            const sid = result.ConnectionInfo.sid;
+            let response = await qnapService.getDownloadJobsList(result.NasConnectionSettings, sid);
+            await qnapStore.updateJobs(response);
         } else {
             monitorServiceId = undefined;
             clearInterval(monitorServiceId);
         }
-    })}, 10000);
+    }, 10000);
 }
 }
 
-export function handleNewSettings() {
-  return login()
-    .then(async () => {
+export async function handleNewSettings() {
+    try {
+        await login();
         await createContextMenus();
         monitorDownloadJobs();
-    })
-    .catch((error) => {
-      console.error(error);
-        setBadge(i18n.getMessage("badgeStatusError"), '#F00');
-    })
-}
-function handleJobsUpdate() {
-    qnapStore.getState().then((result) => {
-        var inProgressJobs = result.Jobs.filter((job) => job.state == DownloadJobState.Downloading).length;
-
-        setBadge(`${inProgressJobs}/${result.Jobs.length}`, '#B9FF66');
-    });
+    } catch (error) {
+        console.error(error);
+        await setBadge(i18n.getMessage("badgeStatusError"), '#F00');
+    }
 }
 
-function setBadge(text: string, color: string) {
-    action.setBadgeBackgroundColor({ color: color });
-    action.setBadgeText({
+async function handleJobsUpdate() {
+    let result = await qnapStore.getState();
+    const inProgressJobs = result.Jobs.filter((job) => job.state == DownloadJobState.Downloading).length;
+    await setBadge(`${inProgressJobs}/${result.Jobs.length}`, '#B9FF66');
+}
+
+async function setBadge(text: string, color: string) {
+    await action.setBadgeBackgroundColor({ color: color });
+    await action.setBadgeText({
         text: text
     });
 }

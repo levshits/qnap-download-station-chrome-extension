@@ -4,6 +4,7 @@ import { IconSquareRoundedPlus, IconTrashX } from "@tabler/icons-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { QnapConnectionString } from "../../common/Models";
+import {useEffect} from "react";
 
 export type ConnectionSettingsFormProps = {
   model?: QnapConnectionString;
@@ -34,10 +35,18 @@ export function ConnectionSettingsForm({
   model,
   onSubmit,
 }: ConnectionSettingsFormProps) {
-  const { handleSubmit, reset, control, formState: {isDirty} } = useForm<QnapConnectionString>({
+  const { handleSubmit,
+      reset,
+      control,
+      formState: {isDirty}
+  } = useForm<QnapConnectionString>({
     defaultValues: model,
     resolver: yupResolver(schema),
   });
+
+  useEffect(()=> {
+      reset(model);
+  }, [model])
 
   const { fields, append, remove } = useFieldArray({
     control,

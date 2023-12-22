@@ -6,12 +6,12 @@ import { handleNewSettings, subscribeToEvents } from "./Worker";
 
 runtime.onInstalled.addListener(() => {
   qnapStore.initialize().then(() => {
-    init();
+    return init();
   });
 });
 
 runtime.onStartup.addListener(() => {
-  init();
+  return init();
 })
 
 export async function init() {

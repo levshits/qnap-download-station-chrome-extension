@@ -1,14 +1,14 @@
 import { ConnectionSettingsForm } from "./ConnectionSettingsForm";
-import { qnapStore } from "../../common/QnapStore";
+import {qnapStore, QnapStoreState} from "../../common/QnapStore";
 import { useQnapStore } from "../../common/useQnapStore";
 import { Container } from "@mantine/core";
 import { permissions } from "webextension-polyfill";
 import { QnapConnectionString } from "../../common/Models";
 
+const connectionSettingsSelector = (x: QnapStoreState) => x.NasConnectionSettings;
+
 export function SettingsPage() {
-  const { isInitialized, state: connectionSettings } = useQnapStore(
-    (x) => x.NasConnectionSettings
-  );
+  const { isInitialized, state: connectionSettings } = useQnapStore(connectionSettingsSelector);
 
   const saveSettings = (settings: QnapConnectionString) => {
     return permissions
