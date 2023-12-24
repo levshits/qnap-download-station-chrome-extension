@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { QnapConnectionString } from "../../common/Models";
 import {useEffect} from "react";
+import {i18n} from "webextension-polyfill";
 
 export type ConnectionSettingsFormProps = {
   model?: QnapConnectionString;
@@ -12,23 +13,23 @@ export type ConnectionSettingsFormProps = {
 };
 
 const schema = yup.object().shape({
-  username: yup.string().required("Username is a required field"),
-  password: yup.string().required("Password is a required field"),
-  url: yup.string().url().required("Url is a required field"),
+  username: yup.string().required(i18n.getMessage('UsernameIsRequiredError')),
+  password: yup.string().required(i18n.getMessage('PasswordIsRequiredError')),
+  url: yup.string().url().required(i18n.getMessage('UrlIsRequiredError')),
   folders: yup
     .array()
     .of(
       yup.object().shape({
-        name: yup.string().required("Folder Name is a required field"),
+        name: yup.string().required(i18n.getMessage('FolderNameIsRequiredError')),
         tempFolder: yup
           .string()
-          .required("Temp Folder Path is a required field"),
+          .required(i18n.getMessage('TempFolderIsRequiredError')),
         moveFolder: yup
           .string()
-          .required("Target Folder Path is a required field"),
+          .required(i18n.getMessage('TargetFolderIsRequiredError')),
       })
     )
-    .required("Folders is a required field"),
+    .required(i18n.getMessage('FoldersIsRequiredError')),
 });
 
 export function ConnectionSettingsForm({

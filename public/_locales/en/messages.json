@@ -18,5 +18,26 @@
     },
     "themeSwitchLabel": {
       "message": "Toggle color scheme"
-    }   
+    },
+    "UsernameIsRequiredError": {
+      "message": "Username is a required field"
+    },
+  "PasswordIsRequiredError": {
+    "message": "Password is a required field"
+  },
+  "UrlIsRequiredError": {
+    "message": "Url is a required field"
+  },
+  "FolderNameIsRequiredError": {
+    "message": "Folder Name is a required field"
+  },
+  "TargetFolderIsRequiredError": {
+    "message": "Target Folder is a required field"
+  },
+  "TempFolderIsRequiredError": {
+    "message": "Temp Folder is a required field"
+  },
+  "FoldersIsRequiredError": {
+    "message": "Folders is a required field"
+  }
 }
