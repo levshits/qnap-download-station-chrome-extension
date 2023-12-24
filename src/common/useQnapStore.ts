@@ -7,7 +7,7 @@ export function useQnapStore<TValue>(selector: (state: QnapStoreState) => TValue
     const [state, setState] = useState<TValue>();
     
     useEffect(()=> {
-        storage.local.get().then((result) => {
+        storage.sync.get().then((result) => {
             setState(selector(result as QnapStoreState));
             setIsInitialized(true);
         })
@@ -16,15 +16,15 @@ export function useQnapStore<TValue>(selector: (state: QnapStoreState) => TValue
     useEffect(()=> {
         let innerState = state;
         const onChangeHandler  = async (changes: Storage.StorageAreaSyncOnChangedChangesType) => {
-            let result = await storage.local.get();
+            let result = await storage.sync.get();
             const value = selector(result as QnapStoreState);
             if(JSON.stringify(innerState) != JSON.stringify(value)) {
                 innerState = value;
                 setState(value);
             }
         }
-        storage.local.onChanged.addListener(onChangeHandler);
-        return () => storage.local.onChanged.removeListener(onChangeHandler);
+        storage.sync.onChanged.addListener(onChangeHandler);
+        return () => storage.sync.onChanged.removeListener(onChangeHandler);
     }, [])
 
     return {state, isInitialized};

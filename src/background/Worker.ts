@@ -1,23 +1,33 @@
-import { storage, action, i18n } from "webextension-polyfill";
-import { DownloadJobState, qnapService } from "../common/QnapService";
+import {storage, action, i18n, permissions} from "webextension-polyfill";
+import {DownloadJobModel, DownloadJobState, qnapService} from "../common/QnapService";
 import { qnapStore } from "../common/QnapStore";
 import { createContextMenus } from "./ContextMenu";
 
 export function subscribeToEvents() {
-  storage.local.onChanged.addListener(async (changes) => {
-    if (!!changes.NasConnectionSettings) {
-        await handleNewSettings();
+    storage.sync.onChanged.addListener(async (changes) => {
+        if (!!changes.NasConnectionSettings) {
+            await handleNewSettings();
+        }
+    });
+
+    if (!permissions.onAdded.hasListener(handleNewSettings)) {
+        permissions.onAdded.addListener(handleNewSettings);
     }
-    if (!!changes.Jobs) {
-        await handleJobsUpdate();
-    }
-  });
 }
 
 async function login() {
     let result = await qnapStore.getState();
-    let response = await qnapService.login(result.NasConnectionSettings);
-    await qnapStore.saveSid(response.sid);
+    if(!!result.NasConnectionSettings.url) {
+        const  origin = result.NasConnectionSettings.url[result.NasConnectionSettings.url.length - 1] == "/"
+            ? result.NasConnectionSettings.url
+            : `${result.NasConnectionSettings.url}/`
+        if(await permissions.contains({
+            origins: [origin]
+        })){
+            let response = await qnapService.login(result.NasConnectionSettings);
+            await qnapStore.saveSid(response.sid);
+        }
+    }
 }
 
 let monitorServiceId: NodeJS.Timer | undefined;
@@ -29,7 +39,7 @@ function monitorDownloadJobs() {
         if (!!result.ConnectionInfo.sid) {
             const sid = result.ConnectionInfo.sid;
             let response = await qnapService.getDownloadJobsList(result.NasConnectionSettings, sid);
-            await qnapStore.updateJobs(response);
+            await handleJobsUpdate(response.data);
         } else {
             monitorServiceId = undefined;
             clearInterval(monitorServiceId);
@@ -49,10 +59,9 @@ export async function handleNewSettings() {
     }
 }
 
-async function handleJobsUpdate() {
-    let result = await qnapStore.getState();
-    const inProgressJobs = result.Jobs.filter((job) => job.state == DownloadJobState.Downloading).length;
-    await setBadge(`${inProgressJobs}/${result.Jobs.length}`, '#B9FF66');
+async function handleJobsUpdate(jobs: DownloadJobModel[]) {
+    const inProgressJobs = jobs.filter((job) => job.state == DownloadJobState.Downloading).length;
+    await setBadge(`${inProgressJobs}/${jobs.length}`, '#B9FF66');
 }
 
 async function setBadge(text: string, color: string) {

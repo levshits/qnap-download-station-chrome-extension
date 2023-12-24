@@ -1,6 +1,5 @@
 import { storage } from 'webextension-polyfill';
-import { QnapConnectionString, QnapFolder } from './Models';
-import { DownloadJobModel, DownloadJobsListResponseModel } from './QnapService';
+import { QnapConnectionString } from './Models';
 
 export type QnapStoreState = {
     NasConnectionSettings: QnapConnectionString,
@@ -8,7 +7,6 @@ export type QnapStoreState = {
         sid?: string,
         lastLogin?: Date
     }
-    Jobs: DownloadJobModel[]
 }
 
 class QnapStore {
@@ -31,44 +29,28 @@ class QnapStore {
             }]
         },
         ConnectionInfo: {
-        },
-        Jobs: []
+        }
     }
 
     initialize(){
-        return storage.local.set(this.defaultState);
+        return storage.sync.set(this.defaultState);
     }
 
     saveSid(sid: string) {
-        return storage.local.set({ConnectionInfo: {
+        return storage.sync.set({ConnectionInfo: {
             sid: sid,
             lastLogin: new Date()
         }});
     }
 
     getState(){
-        return storage.local.get().then((result) => {
+        return storage.sync.get().then((result) => {
             return result as QnapStoreState;
         })
     }
 
-    getConnectionSettings(){
-        return this.getState().then((result) => {
-            var value = result?.NasConnectionSettings ?? {
-                url: '',
-                username: '',
-                password: ''
-            };
-            return value;
-        });
-    }
-
     saveConnectionSettings(value: QnapConnectionString){
-        return storage.local.set({NasConnectionSettings: value, ConnectionInfo: {}});
-    }
-
-    updateJobs(response: DownloadJobsListResponseModel) {
-        return storage.local.set({Jobs: response.data});
+        return storage.sync.set({NasConnectionSettings: value, ConnectionInfo: {}});
     }
 }
 
