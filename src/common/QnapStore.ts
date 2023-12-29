@@ -32,8 +32,11 @@ class QnapStore {
         }
     }
 
-    initialize(){
-        return storage.sync.set(this.defaultState);
+    async initialize(){
+        const state = await storage.sync.get() as QnapStoreState;
+        if(!state?.ConnectionInfo?.sid) {
+            await storage.sync.set(this.defaultState);
+        }
     }
 
     saveSid(sid: string) {

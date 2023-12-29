@@ -4,7 +4,7 @@ import {
   DownloadJobState,
   qnapService,
 } from "../../common/QnapService";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActionIcon, Container, Group } from "@mantine/core";
 import {
   DataTable,

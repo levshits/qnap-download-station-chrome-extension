@@ -1,4 +1,3 @@
-import { type } from "os";
 import { QnapConnectionString } from "./Models";
 
 export type LoginResponseModel = BaseResponseModel & {

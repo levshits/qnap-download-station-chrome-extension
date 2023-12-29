@@ -1,40 +1,15 @@
 import "@mantine/core/styles.css";
 import "mantine-datatable/styles.layer.css";
-import {AppShell, Group, MantineProvider, Tabs, Title,} from "@mantine/core";
-import {SettingsPage} from "./views/SettingsPage";
+import {AppShell, Group, MantineProvider, Title,} from "@mantine/core";
 import {theme} from "../theme";
 import "./App.css";
-import {DownloadsPage} from "./views/DownloadsPage";
 import {ReactComponent as LogoIcon} from "./logo.svg";
 import {i18n} from "webextension-polyfill";
 import {ModalsProvider} from "@mantine/modals";
 import {ColorSchemePicker} from "./components/ColorSchemePicker";
-import {QnapStoreState} from "../common/QnapStore";
-import {useQnapStore} from "../common/useQnapStore";
+import {ComponentMainSection} from "./components/ComponentMainSection";
 
 
-const sidSelector = (x: QnapStoreState) => x.ConnectionInfo?.sid;
-
-function ComponentMainSection() {
-  const { state: sid } = useQnapStore(sidSelector);
-
-  return <Tabs defaultValue={!!sid ? "downloads" : "settings"}>
-    <Tabs.List grow>
-      <Tabs.Tab value="settings">
-        {i18n.getMessage("tabTitleSettings")}
-      </Tabs.Tab>
-      {!!sid && <Tabs.Tab value="downloads">
-        {i18n.getMessage("tabTitleDownloads")}
-      </Tabs.Tab>}
-    </Tabs.List>
-    <Tabs.Panel value="settings">
-      <SettingsPage/>
-    </Tabs.Panel>
-    {!!sid && <Tabs.Panel value="downloads">
-      <DownloadsPage/>
-    </Tabs.Panel>}
-  </Tabs>;
-}
 
 function App() {
   return (
