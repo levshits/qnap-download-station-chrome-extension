@@ -1,8 +1,8 @@
 import "@mantine/core/styles.css";
 import "mantine-datatable/styles.layer.css";
+import "./App.css";
 import {AppShell, Group, MantineProvider, Title,} from "@mantine/core";
 import {theme} from "../theme";
-import "./App.css";
 import {ReactComponent as LogoIcon} from "./logo.svg";
 import {i18n} from "webextension-polyfill";
 import {ModalsProvider} from "@mantine/modals";
@@ -10,9 +10,7 @@ import {ColorSchemePicker} from "./components/ColorSchemePicker";
 import {ComponentMainSection} from "./components/ComponentMainSection";
 
 
-
-function App() {
-  return (
+const App = () => (
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <ModalsProvider>
         <AppShell header={{height: 80}}>
@@ -29,7 +27,6 @@ function App() {
         </AppShell>
       </ModalsProvider>
     </MantineProvider>
-  );
-}
+);
 
 export default App;
