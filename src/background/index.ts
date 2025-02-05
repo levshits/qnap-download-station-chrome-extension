@@ -1,6 +1,7 @@
 import {
   runtime
 } from "webextension-polyfill";
+import pRetry from 'p-retry';
 import { qnapStore } from "../common/QnapStore";
 import { handleNewSettings, subscribeToEvents } from "./Worker";
 
@@ -17,9 +18,10 @@ runtime.onStartup.addListener(() => {
 export async function init() {
   subscribeToEvents();
 
-  try{
-    await handleNewSettings();
-  } catch (error) {
-    console.error(error);
-  }
+  await pRetry(handleNewSettings, {
+    onFailedAttempt: error => {
+      console.log(`Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${error.message}`);
+    },
+    retries: 10
+  })
 }
